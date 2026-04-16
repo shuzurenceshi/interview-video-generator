@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const ZHIPU_API_KEY = '33721c7103894e9f9f247e0191d279b4.ipAygQQA5rrhurkW';
-const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+const MINIMAX_API_KEY = 'sk-cp-47ggy2oM53bhg0vJgUgr7Rvs7OMam9puM9MhElv8Ojw6eZXSW2O4FCwop12BNjHBU21XFRbpq76wv4MRz58J6Lq_Pmr46znCwDDNDk_WOU_myGZhQCuIcFc';
+const MINIMAX_API_URL = 'https://api.minimaxi.com/anthropic/v1/messages';
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,62 +35,63 @@ HOST: [主持人的话]
 
     const user_prompt = `主题：${config.topic}\n\n内容：\n${content}\n\n请根据以上内容，生成一个访谈对话稿。`;
 
-    const response = await fetch(ZHIPU_API_URL, {
+    const response = await fetch(MINIMAX_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${ZHIPU_API_KEY}`,
+        'Authorization': `Bearer ${MINIMAX_API_KEY}`,
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'glm-4',
+        model: 'MiniMax-M2.7',
         messages: [
-          { role: 'system', content: system_prompt },
-          { role: 'user', content: user_prompt },
+          { role: 'user', content: `${system_prompt}\n\n${user_prompt}` },
         ],
-        temperature: 0.7,
+        max_tokens: 2000,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Zhipu API error:', response.status, errorText);
+      console.error('MiniMax API error:', response.status, errorText);
       return NextResponse.json({ error: 'Script generation failed' }, { status: 500 });
     }
 
     const data = await response.json();
-    const raw_script = data.choices?.[0]?.message?.content || '';
+
+    // Extract text from MiniMax response (which has thinking + text blocks)
+    let raw_script = '';
+    const content_blocks = data.content || [];
+    for (const block of content_blocks) {
+      if (block.type === 'text') {
+        raw_script = block.text;
+        break;
+      }
+    }
+
+    if (!raw_script) {
+      console.error('No text in MiniMax response:', JSON.stringify(data).slice(0, 500));
+      return NextResponse.json({ error: 'Script generation failed - no text in response' }, { status: 500 });
+    }
 
     // Parse the script into structured dialogue
     const turns: { role: 'host' | 'guest'; speaker: string; text: string }[] = [];
     const lines = raw_script.split('\n').filter((l: string) => l.trim());
 
     for (const line of lines) {
-      const match = line.match(/^(HOST|GUEST)[:：]\s*(.+)/);
+      const match = line.match(/^(HOST|主持人)[:：]\s*(.+)/);
       if (match) {
-        const role = match[1].toLowerCase() === 'host' ? 'host' : 'guest';
-        const speaker = role === 'host' ? config.hostName : config.guestName;
-        turns.push({ role, speaker, text: match[2].trim() });
-      }
-    }
-
-    // Fallback if parsing fails
-    if (turns.length === 0) {
-      // Try to parse with Chinese labels
-      for (const line of lines) {
-        const match = line.match(/^(主持人|嘉賓|嘉宾)[:：]\s*(.+)/);
-        if (match) {
-          turns.push({ role: 'host', speaker: config.hostName, text: match[2].trim() });
-        } else {
-          const guestMatch = line.match(/^(嘉宾|客人)[:：]\s*(.+)/);
-          if (guestMatch) {
-            turns.push({ role: 'guest', speaker: config.guestName, text: guestMatch[2].trim() });
-          }
+        turns.push({ role: 'host', speaker: config.hostName, text: match[2].trim() });
+      } else {
+        const guestMatch = line.match(/^(GUEST|嘉宾|客人)[:：]\s*(.+)/);
+        if (guestMatch) {
+          turns.push({ role: 'guest', speaker: config.guestName, text: guestMatch[2].trim() });
         }
       }
     }
 
     if (turns.length === 0) {
-      return NextResponse.json({ error: 'Failed to parse script' }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to parse script', raw: raw_script }, { status: 500 });
     }
 
     return NextResponse.json({ script: turns, raw: raw_script });
