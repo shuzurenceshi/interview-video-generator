@@ -6,14 +6,6 @@ import type { InputMode, InterviewConfig, DialogueTurn, HistoryItem } from '@/li
 
 const STEPS = ['输入内容', '访谈设置', '编辑访谈稿', '生成音频', '生成视频'];
 
-const STEP_ICONS = [
-  <svg key="0" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>,
-  <svg key="1" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.125 1.125 0 01-1.125-1.125M15.75 12a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25m2.625-5.25a3 3 0 01-3-3m0 5.25a3 3 0 003 3m-3 0a3 3 0 01-3-3" /></svg>,
-  <svg key="2" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" /></svg>,
-  <svg key="3" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>,
-  <svg key="4" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-1.5A1.125 1.125 0 0118 18.375M20.625 4.5H3.375m17.25 0c.621 0 1.125.504 1.125 1.125M20.625 4.5h-1.5C18.504 4.5 18 5.004 18 5.625m3.75 0v1.5c0 .621-.504 1.125-1.125 1.125M3.375 4.5c-.621 0-1.125.504-1.125 1.125M3.375 4.5h1.5C5.496 4.5 6 5.004 6 5.625m-3.75 0v1.5c0 .621.504 1.125 1.125 1.125m0 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m1.5-3.75C5.496 8.25 6 8.754 6 9.375v1.5m0-5.25v5.25m0-5.25C6 5.004 6.504 4.5 7.125 4.5h9.75c.621 0 1.125.504 1.125 1.125m1.125 2.625h1.5m-1.5 0A1.125 1.125 0 0118 7.125v-1.5m1.125 2.625c-.621 0-1.125.504-1.125 1.125v1.5m2.625-2.625c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125M18 5.625v5.25M7.125 12h9.75m-9.75 0A1.125 1.125 0 016 10.875M7.125 12C6.504 12 6 12.504 6 13.125m0-2.25C6 11.496 5.496 12 4.875 12M18 10.875c0 .621-.504 1.125-1.125 1.125M18 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m-12 5.25v-5.25m0 5.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125m-12 0v-1.5c0-.621-.504-1.125-1.125-1.125M18 18.375v-5.25m0 5.25v-1.5c0-.621.504-1.125 1.125-1.125M18 13.125v1.5c0 .621.504 1.125 1.125 1.125M18 13.125c0-.621.504-1.125 1.125-1.125M6 13.125v1.5c0 .621-.504 1.125-1.125 1.125M6 13.125C6 12.504 5.496 12 4.875 12m-1.5 0h1.5m14.25 0h1.5" /></svg>,
-];
-
 export default function CreatePage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -74,6 +66,7 @@ export default function CreatePage() {
     setScriptError('');
     setProgress(0);
     try {
+      // Simulate progress
       const progressInterval = setInterval(() => {
         setProgress(p => Math.min(p + 10, 80));
       }, 300);
@@ -134,6 +127,7 @@ export default function CreatePage() {
     setVideoError('');
     setProgress(0);
     try {
+      // First generate cover
       setProgress(20);
       const coverRes = await fetch('/api/cover', {
         method: 'POST',
@@ -145,6 +139,7 @@ export default function CreatePage() {
       setCoverUrl(coverData.cover);
       setProgress(50);
 
+      // Then generate video
       const videoRes = await fetch('/api/generate-video', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -159,6 +154,7 @@ export default function CreatePage() {
       if (videoData.error) throw new Error(videoData.error);
       setVideoUrl(videoData.video);
 
+      // Save to history
       const history: HistoryItem[] = JSON.parse(localStorage.getItem('interview_history') || '[]');
       const newItem: HistoryItem = {
         id: Date.now().toString(36),
@@ -180,6 +176,7 @@ export default function CreatePage() {
   }
 
   function handleEditScript() {
+    // Re-parse the edited script
     const turns: DialogueTurn[] = [];
     const lines = editingScript.split('\n').filter(l => l.trim());
     for (const line of lines) {
@@ -201,85 +198,53 @@ export default function CreatePage() {
   function ProgressBar({ label }: { label: string }) {
     return (
       <div className="w-full">
-        <div className="flex justify-between text-xs text-gray-400 mb-2.5 font-medium">
+        <div className="flex justify-between text-sm text-gray-400 mb-2">
           <span>{label}</span>
-          <span className="text-pink-400">{progress}%</span>
+          <span>{progress}%</span>
         </div>
-        <div className="h-1.5 bg-gray-800/60 rounded-full overflow-hidden backdrop-blur">
+        <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full transition-all duration-500 ease-out"
-            style={{
-              width: `${progress}%`,
-              background: 'linear-gradient(90deg, #ec4899 0%, #a855f7 50%, #6366f1 100%)',
-              boxShadow: '0 0 12px oklch(70% 0.22 340 / 0.5)',
-            }}
+            className="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-300"
+            style={{ width: `${progress}%` }}
           />
         </div>
       </div>
     );
   }
 
-  const inputClass = "w-full bg-gray-900/70 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500/60 focus:ring-2 focus:ring-pink-500/20 transition-all duration-200";
-  const btnPrimary = "bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40 transition-all duration-200 flex items-center gap-2";
-  const btnGhost = "text-gray-400 hover:text-white hover:bg-white/5 px-5 py-3 rounded-xl transition-all duration-200";
-
   return (
-    <div className="min-h-screen text-white relative">
-      {/* Background decoration */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-pink-500/5 blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-purple-500/5 blur-3xl" />
-      </div>
-
+    <div className="min-h-screen bg-gray-950 text-white">
       {/* Header */}
-      <header className="relative z-10 border-b border-white/5 bg-black/40 backdrop-blur-xl sticky top-0">
+      <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.push('/')}
-              className="text-gray-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/5"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+            <button onClick={() => router.push('/')} className="text-gray-400 hover:text-white transition mr-4">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <div className="w-px h-5 bg-white/10" />
-            <span className="font-bold text-base tracking-wide">创建访谈视频</span>
+            <span className="font-bold text-lg">创建访谈视频</span>
           </div>
-          <div className="text-sm text-gray-500 font-medium">步骤 {step + 1} / {STEPS.length}</div>
+          <div className="text-sm text-gray-500">步骤 {step + 1} / {STEPS.length}</div>
         </div>
       </header>
 
       {/* Step indicator */}
-      <div className="relative z-10 border-b border-white/5 bg-black/20 backdrop-blur-sm">
+      <div className="border-b border-gray-800 bg-gray-900/50">
         <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center justify-between">
             {STEPS.map((s, i) => (
-              <div key={s} className="flex items-center gap-0 flex-1">
-                <div className="flex flex-col items-center gap-1.5">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold transition-all duration-300 ${
-                    i < step
-                      ? 'bg-gradient-to-br from-purple-600 to-pink-500 text-white shadow-lg shadow-purple-500/30'
-                      : i === step
-                      ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/30 scale-110'
-                      : 'bg-gray-800/60 text-gray-500 backdrop-blur glass-card'
-                  }`}>
-                    {i < step ? (
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-                    ) : (
-                      <span className={i === step ? 'animate-pulse' : ''}>{i + 1}</span>
-                    )}
-                  </div>
-                  <span className={`text-xs font-medium hidden sm:block transition-colors duration-200 ${
-                    i === step ? 'text-white' : i < step ? 'text-purple-400' : 'text-gray-500'
-                  }`}>{s}</span>
+              <div key={s} className="flex items-center gap-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition ${
+                  i < step ? 'bg-purple-600 text-white' :
+                  i === step ? 'bg-pink-500 text-white' :
+                  'bg-gray-800 text-gray-500'
+                }`}>
+                  {i < step ? '✓' : i + 1}
                 </div>
+                <span className={`text-sm hidden sm:block ${i === step ? 'text-white' : 'text-gray-500'}`}>{s}</span>
                 {i < STEPS.length - 1 && (
-                  <div className={`flex-1 h-0.5 mx-2 rounded-full transition-all duration-500 ${
-                    i < step
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-500 shadow-lg shadow-purple-500/30'
-                      : 'bg-gray-800/60'
-                  }`} />
+                  <div className={`w-8 sm:w-16 h-0.5 mx-2 ${i < step ? 'bg-purple-600' : 'bg-gray-800'}`} />
                 )}
               </div>
             ))}
@@ -288,122 +253,95 @@ export default function CreatePage() {
       </div>
 
       {/* Content */}
-      <main className="relative z-10 max-w-4xl mx-auto px-6 py-10">
+      <main className="max-w-4xl mx-auto px-6 py-8">
 
         {/* ===== STEP 0: Input Content ===== */}
         {step === 0 && (
           <div>
-            <div className="mb-2">
-              <h2 className="text-2xl font-bold tracking-tight">输入访谈内容</h2>
-              <p className="text-gray-500 mt-1.5">选择一种方式提供你想转化为访谈视频的内容</p>
-            </div>
+            <h2 className="text-2xl font-bold mb-2">输入访谈内容</h2>
+            <p className="text-gray-400 mb-8">选择一种方式提供你想转化为访谈视频的内容</p>
 
             {/* Mode selector */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {[
-                {
-                  id: 'direct', label: '直接输入', icon: (
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
-                  ),
-                  desc: '手动粘贴或输入文案', color: 'pink',
-                },
-                {
-                  id: 'scrape', label: '链接采集', icon: (
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>
-                  ),
-                  desc: '输入文章URL自动抓取', color: 'purple',
-                },
-                {
-                  id: 'reference', label: '参考素材', icon: (
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
-                  ),
-                  desc: '粘贴参考文章或视频描述', color: 'violet',
-                },
+                { id: 'direct', label: '直接输入', icon: '✏️', desc: '手动粘贴或输入文案' },
+                { id: 'scrape', label: '链接采集', icon: '🔗', desc: '输入文章URL自动抓取' },
+                { id: 'reference', label: '参考素材', icon: '📄', desc: '粘贴参考文章或视频描述' },
               ].map(mode => (
                 <button
                   key={mode.id}
                   onClick={() => setInputMode(mode.id as InputMode)}
-                  className={`group relative p-5 rounded-2xl border text-left transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 overflow-hidden ${
+                  className={`p-5 rounded-2xl border-2 text-left transition ${
                     inputMode === mode.id
-                      ? mode.color === 'pink'
-                        ? 'border-pink-500/60 bg-pink-500/10 shadow-lg shadow-pink-500/10'
-                        : mode.color === 'purple'
-                        ? 'border-purple-500/60 bg-purple-500/10 shadow-lg shadow-purple-500/10'
-                        : 'border-violet-500/60 bg-violet-500/10 shadow-lg shadow-violet-500/10'
-                      : 'border-white/8 bg-white/5 hover:border-white/20 hover:bg-white/8'
+                      ? 'border-pink-500 bg-pink-500/10'
+                      : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
                   }`}
                 >
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3 transition-colors ${
-                    inputMode === mode.id
-                      ? mode.color === 'pink' ? 'bg-pink-500/20 text-pink-400'
-                        : mode.color === 'purple' ? 'bg-purple-500/20 text-purple-400'
-                        : 'bg-violet-500/20 text-violet-400'
-                      : 'bg-white/8 text-gray-400 group-hover:text-white group-hover:bg-white/10'
-                  }`}>
-                    {mode.icon}
-                  </div>
+                  <div className="text-2xl mb-2">{mode.icon}</div>
                   <div className="font-semibold mb-1">{mode.label}</div>
                   <div className="text-sm text-gray-500">{mode.desc}</div>
                 </button>
               ))}
             </div>
 
-            {/* Textarea */}
-            <div className="relative">
+            {/* Direct input */}
+            {inputMode === 'direct' && (
               <textarea
                 value={content}
                 onChange={e => setContent(e.target.value)}
-                placeholder={
-                  inputMode === 'direct'
-                    ? '在这里粘贴或输入你想转化为访谈内容的文字...'
-                    : inputMode === 'scrape'
-                    ? '采集到的内容会显示在这里...'
-                    : '粘贴参考文章内容、视频描述、或者任何你想作为访谈素材的内容...'
-                }
-                className="w-full h-64 bg-gray-900/60 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 resize-none focus:outline-none focus:border-pink-500/50 focus:ring-2 focus:ring-pink-500/15 transition-all duration-200 backdrop-blur"
+                placeholder="在这里粘贴或输入你想转化为访谈内容的文字..."
+                className="w-full h-64 bg-gray-900 border border-gray-800 rounded-xl p-4 text-white resize-none focus:outline-none focus:border-pink-500 transition"
               />
-              {content && (
-                <div className="absolute bottom-3 right-3 text-xs text-gray-500">
-                  {content.length} 字符
-                </div>
-              )}
-            </div>
+            )}
 
-            {/* Scrape URL input */}
+            {/* Scrape URL */}
             {inputMode === 'scrape' && (
-              <div className="mt-4">
-                <div className="flex gap-3">
+              <div>
+                <div className="flex gap-3 mb-4">
                   <input
                     type="url"
                     value={url}
                     onChange={e => setUrl(e.target.value)}
                     placeholder="输入文章URL，例如 https://..."
-                    className={`${inputClass} flex-1`}
+                    className="flex-1 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition"
                   />
                   <button
                     onClick={handleScrape}
                     disabled={scraping || !url}
-                    className={btnPrimary + ' !px-6 !py-3 !text-sm'}
+                    className="bg-pink-500 hover:bg-pink-600 disabled:bg-gray-700 disabled:cursor-not-allowed px-6 py-3 rounded-xl font-medium transition"
                   >
-                    {scraping ? (
-                      <><span className="animate-spin">◌</span> 采集中...</>
-                    ) : (
-                      <><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg> 采集</>
-                    )}
+                    {scraping ? '采集中...' : '采集'}
                   </button>
                 </div>
-                {scrapeError && <p className="text-red-400 text-sm mt-3 flex items-center gap-1.5"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg> {scrapeError}</p>}
+                {scrapeError && <p className="text-red-400 text-sm mb-4">{scrapeError}</p>}
+                {content && (
+                  <textarea
+                    value={content}
+                    onChange={e => setContent(e.target.value)}
+                    placeholder="采集到的内容会显示在这里..."
+                    className="w-full h-64 bg-gray-900 border border-gray-800 rounded-xl p-4 text-white resize-none focus:outline-none focus:border-pink-500 transition"
+                  />
+                )}
               </div>
+            )}
+
+            {/* Reference */}
+            {inputMode === 'reference' && (
+              <textarea
+                value={content}
+                onChange={e => setContent(e.target.value)}
+                placeholder="粘贴参考文章内容、视频描述、或者任何你想作为访谈素材的内容..."
+                className="w-full h-64 bg-gray-900 border border-gray-800 rounded-xl p-4 text-white resize-none focus:outline-none focus:border-pink-500 transition"
+              />
             )}
 
             <div className="flex justify-end mt-6">
               <button
                 onClick={() => setStep(1)}
                 disabled={!content.trim()}
-                className={btnPrimary}
+                className="bg-pink-500 hover:bg-pink-600 disabled:bg-gray-700 disabled:cursor-not-allowed px-8 py-3 rounded-xl font-bold transition"
               >
-                下一步：访谈设置
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                下一步：访谈设置 →
               </button>
             </div>
           </div>
@@ -412,10 +350,8 @@ export default function CreatePage() {
         {/* ===== STEP 1: Interview Config ===== */}
         {step === 1 && (
           <div>
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold tracking-tight">访谈设置</h2>
-              <p className="text-gray-500 mt-1.5">配置访谈的基本信息和风格</p>
-            </div>
+            <h2 className="text-2xl font-bold mb-2">访谈设置</h2>
+            <p className="text-gray-400 mb-8">配置访谈的基本信息和风格</p>
 
             <div className="space-y-6 max-w-xl">
               <div>
@@ -425,7 +361,7 @@ export default function CreatePage() {
                   value={config.topic}
                   onChange={e => setConfig({ ...config, topic: e.target.value })}
                   placeholder="例如：AI时代的职业选择"
-                  className={inputClass}
+                  className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition"
                 />
               </div>
 
@@ -436,7 +372,8 @@ export default function CreatePage() {
                     type="text"
                     value={config.hostName}
                     onChange={e => setConfig({ ...config, hostName: e.target.value })}
-                    className={inputClass}
+                    placeholder="主持人"
+                    className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition"
                   />
                 </div>
                 <div>
@@ -445,19 +382,260 @@ export default function CreatePage() {
                     type="text"
                     value={config.guestName}
                     onChange={e => setConfig({ ...config, guestName: e.target.value })}
-                    className={inputClass}
+                    placeholder="嘉宾"
+                    className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">对话风格</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">对话风格</label>
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    {
-                      id: 'casual', label: '轻松随意', desc: '自然对话，节奏轻松',
-                      icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" /></svg>,
-                    },
-                    {
-                      id: 'formal', label: '正式严谨', desc: '措辞规范，适合专业话题',
-                      icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.
+                    { id: 'casual', label: '轻松随意', desc: '自然对话，节奏轻松' },
+                    { id: 'formal', label: '正式严谨', desc: '措辞规范，适合专业话题' },
+                  ].map(tone => (
+                    <button
+                      key={tone.id}
+                      onClick={() => setConfig({ ...config, tone: tone.id as 'casual' | 'formal' })}
+                      className={`p-4 rounded-xl border-2 text-left transition ${
+                        config.tone === tone.id
+                          ? 'border-pink-500 bg-pink-500/10'
+                          : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
+                      }`}
+                    >
+                      <div className="font-semibold mb-1">{tone.label}</div>
+                      <div className="text-sm text-gray-500">{tone.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-8">
+              <button onClick={() => setStep(0)} className="text-gray-400 hover:text-white transition px-6 py-3">
+                ← 上一步
+              </button>
+              <button
+                onClick={async () => {
+                  await handleGenerateScript();
+                  if (!scriptError) setStep(2);
+                }}
+                disabled={!config.topic.trim() || generatingScript}
+                className="bg-pink-500 hover:bg-pink-600 disabled:bg-gray-700 disabled:cursor-not-allowed px-8 py-3 rounded-xl font-bold transition flex items-center gap-2"
+              >
+                {generatingScript ? (
+                  <>
+                    <span className="animate-spin">⏳</span> AI 生成中...
+                  </>
+                ) : (
+                  '生成访谈稿 →'
+                )}
+              </button>
+            </div>
+
+            {generatingScript && (
+              <div className="mt-6 max-w-xl">
+                <ProgressBar label="AI 正在分析内容并生成访谈稿..." />
+              </div>
+            )}
+
+            {scriptError && (
+              <p className="text-red-400 mt-4">{scriptError}</p>
+            )}
+          </div>
+        )}
+
+        {/* ===== STEP 2: Edit Script ===== */}
+        {step === 2 && (
+          <div>
+            <h2 className="text-2xl font-bold mb-2">编辑访谈稿</h2>
+            <p className="text-gray-400 mb-2">AI 已生成访谈稿，你可以直接在下方编辑</p>
+            <p className="text-gray-500 text-sm mb-4">
+              格式：<code className="bg-gray-800 px-1 rounded">HOST:</code> 主持人台词 / <code className="bg-gray-800 px-1 rounded">GUEST:</code> 嘉宾台词
+            </p>
+
+            <textarea
+              value={editingScript}
+              onChange={e => setEditingScript(e.target.value)}
+              className="w-full h-80 bg-gray-900 border border-gray-800 rounded-xl p-4 text-white font-mono text-sm resize-none focus:outline-none focus:border-pink-500 transition"
+            />
+
+            <div className="flex justify-between mt-6">
+              <button onClick={() => setStep(1)} className="text-gray-400 hover:text-white transition px-6 py-3">
+                ← 上一步
+              </button>
+              <button
+                onClick={() => {
+                  handleEditScript();
+                  setStep(3);
+                }}
+                className="bg-pink-500 hover:bg-pink-600 px-8 py-3 rounded-xl font-bold transition"
+              >
+                确认并生成音频 →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ===== STEP 3: Generate Audio ===== */}
+        {step === 3 && !audioUrl && (
+          <div>
+            <h2 className="text-2xl font-bold mb-2">生成对话音频</h2>
+            <p className="text-gray-400 mb-8">
+              将访谈稿转化为双人对话音频，使用 Edge-TTS 合成
+            </p>
+
+            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 max-w-xl">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-xl">🎙️</div>
+                <div>
+                  <div className="font-semibold">主持人：{config.hostName}</div>
+                  <div className="text-sm text-gray-500">音色：zh-CN-YunxiNeural</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-pink-600 flex items-center justify-center text-xl">🎙️</div>
+                <div>
+                  <div className="font-semibold">嘉宾：{config.guestName}</div>
+                  <div className="text-sm text-gray-500">音色：zh-CN-XiaoxiaoNeural</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 max-w-xl">
+              <ProgressBar label={generatingAudio ? '正在合成音频...' : '准备就绪'} />
+            </div>
+
+            <div className="flex justify-between mt-6">
+              <button onClick={() => setStep(2)} className="text-gray-400 hover:text-white transition px-6 py-3">
+                ← 上一步
+              </button>
+              <button
+                onClick={async () => {
+                  await handleGenerateAudio();
+                }}
+                disabled={generatingAudio}
+                className="bg-pink-500 hover:bg-pink-600 disabled:bg-gray-700 disabled:cursor-not-allowed px-8 py-3 rounded-xl font-bold transition"
+              >
+                {generatingAudio ? '⏳ 生成中...' : '开始生成音频'}
+              </button>
+            </div>
+
+            {audioError && <p className="text-red-400 mt-4">{audioError}</p>}
+          </div>
+        )}
+
+        {/* ===== STEP 3b: Audio Preview ===== */}
+        {step === 3 && audioUrl && (
+          <div>
+            <h2 className="text-2xl font-bold mb-2">音频已生成 ✓</h2>
+            <p className="text-gray-400 mb-8">可以先试听一下效果，确认后继续生成视频</p>
+
+            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 max-w-xl">
+              <audio controls src={audioUrl} className="w-full" />
+            </div>
+
+            <div className="flex justify-between mt-6">
+              <button onClick={() => setStep(2)} className="text-gray-400 hover:text-white transition px-6 py-3">
+                ← 重新编辑
+              </button>
+              <button
+                onClick={() => setStep(4)}
+                className="bg-pink-500 hover:bg-pink-600 px-8 py-3 rounded-xl font-bold transition"
+              >
+                生成视频 →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ===== STEP 4: Generate Video ===== */}
+        {step === 4 && !videoUrl && (
+          <div>
+            <h2 className="text-2xl font-bold mb-2">生成访谈视频</h2>
+            <p className="text-gray-400 mb-8">将封面图和音频合成为完整的 MP4 视频</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 max-w-xl">
+              <div className="bg-gray-900/50 border border-gray-800 rounded-2xl overflow-hidden">
+                {coverUrl && <img src={coverUrl} alt="封面预览" className="w-full" />}
+                <div className="p-3 text-sm text-gray-400">封面预览</div>
+              </div>
+              <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 flex flex-col items-center justify-center">
+                {audioUrl && <audio controls src={audioUrl} className="w-full" />}
+                <div className="text-sm text-gray-400 mt-3">音频轨道</div>
+              </div>
+            </div>
+
+            <div className="mt-6 max-w-xl">
+              <ProgressBar label={generatingVideo ? '正在合成视频...' : '准备就绪'} />
+            </div>
+
+            <div className="flex justify-between mt-6">
+              <button onClick={() => setStep(3)} className="text-gray-400 hover:text-white transition px-6 py-3">
+                ← 上一步
+              </button>
+              <button
+                onClick={async () => {
+                  await handleGenerateVideo();
+                }}
+                disabled={generatingVideo}
+                className="bg-pink-500 hover:bg-pink-600 disabled:bg-gray-700 disabled:cursor-not-allowed px-8 py-3 rounded-xl font-bold transition"
+              >
+                {generatingVideo ? '⏳ 生成中...' : '生成视频'}
+              </button>
+            </div>
+
+            {videoError && <p className="text-red-400 mt-4">{videoError}</p>}
+          </div>
+        )}
+
+        {/* ===== STEP 5: Download ===== */}
+        {step === 4 && videoUrl && (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">视频已生成 ✓</h2>
+            <p className="text-gray-400 mb-8">恭喜！访谈视频已生成完毕，可以下载了</p>
+
+            <div className="max-w-2xl">
+              <video
+                src={videoUrl}
+                controls
+                className="w-full rounded-2xl shadow-2xl"
+              />
+            </div>
+
+            <div className="flex gap-4 mt-8">
+              <a
+                href={videoUrl}
+                download={`访谈_${config.topic}_${Date.now()}.mp4`}
+                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-bold transition"
+              >
+                ⬇️ 下载视频
+              </a>
+              <button
+                onClick={() => router.push('/history')}
+                className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-xl font-bold transition"
+              >
+                查看历史记录
+              </button>
+              <button
+                onClick={() => {
+                  setStep(0);
+                  setContent('');
+                  setScript([]);
+                  setAudioUrl('');
+                  setVideoUrl('');
+                  setCoverUrl('');
+                  setEditingScript('');
+                }}
+                className="text-gray-400 hover:text-white transition px-6 py-3"
+              >
+                再做一期
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
